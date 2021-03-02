@@ -93,4 +93,30 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     setClock('.timer', deadline);
+
+    // Modal
+
+    const modal = document.querySelector('.modal');
+
+    function closeModal() {
+        modal.classList.add('hide');
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('click', e => {
+        if (e.target.dataset.modal === '') {
+            modal.classList.add('show');
+            modal.classList.remove('hide');
+            document.body.style.overflow = 'hidden';
+        } else if (e.target.dataset.close === '' || e.target.className === 'modal show') {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.code === 'Escape' && modal.classList.contains('show')) {
+            closeModal();
+        }
+    });
 });
