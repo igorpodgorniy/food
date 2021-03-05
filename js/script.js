@@ -137,8 +137,6 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', showModalByScroll);
 
     // Используем классы для карточек
-
-    const menuDiv = document.querySelector('.menu__field .container');
     class MenuCard {
         constructor(src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
@@ -273,4 +271,59 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }, 4000);
     }
+
+    // Slider
+
+    const slider = document.querySelector('.offer__slider');
+    const slide = document.querySelector('.offer__slider-wrapper');
+    const sliderCounter = slider.querySelector('.offer__slider-counter');
+    const sliderCurrent = sliderCounter.querySelector('#current');
+    const sliderCountTotal = sliderCounter.querySelector('#total');
+    const sliderPrev = sliderCounter.querySelector('.offer__slider-prev');
+    const sliderNext = sliderCounter.querySelector('.offer__slider-next');
+
+    const itemsSlider = [{src: 'img/slider/pepper.jpg', alt: 'pepper'},
+                        {src: 'img/slider/food-12.jpg', alt: 'food'},
+                        {src: 'img/slider/olive-oil.jpg', alt: 'oil'},
+                        {src: 'img/slider/paprika.jpg', alt: 'paprika'}];
+
+    let count = 1;
+    
+    sliderCountTotal.innerText = `0${itemsSlider.length}`;
+
+    function itemSlider(item, count) {
+        slide.innerHTML = '';
+        slide.innerHTML = `
+            <div class="offer__slide">
+                <img src=${item.src} alt=${item.alt}>
+            </div>
+        `;
+        sliderCurrent.innerText = `0${count}`;
+    }
+
+    function renderItemSlider() {
+        itemsSlider.forEach((item, i) => {
+            if (i === count - 1) {
+                itemSlider(item, count);
+            }
+        });
+    }
+
+    renderItemSlider();
+
+    sliderCounter.addEventListener('click', e => {
+        if (e.target === sliderNext) {
+            count++;
+            if (count > itemsSlider.length) {
+                count = 1; 
+            }
+            renderItemSlider();
+        } else if (e.target === sliderPrev) {
+            count--;
+            if (count < 1) {
+                count = itemsSlider.length;
+            }
+            renderItemSlider();
+        }
+    });
 });
