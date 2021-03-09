@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     //Timer
 
-    const deadline = '2021-03-07';
+    const deadline = '2021-03-20';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date());
@@ -125,7 +125,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const modalTimerId = setTimeout(openModal, 10000);
+    const modalTimerId = setTimeout(openModal, 50000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -274,56 +274,79 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Slider
 
-    const slider = document.querySelector('.offer__slider');
-    const slide = document.querySelector('.offer__slider-wrapper');
-    const sliderCounter = slider.querySelector('.offer__slider-counter');
-    const sliderCurrent = sliderCounter.querySelector('#current');
-    const sliderCountTotal = sliderCounter.querySelector('#total');
-    const sliderPrev = sliderCounter.querySelector('.offer__slider-prev');
-    const sliderNext = sliderCounter.querySelector('.offer__slider-next');
-
-    const itemsSlider = [{src: 'img/slider/pepper.jpg', alt: 'pepper'},
-                        {src: 'img/slider/food-12.jpg', alt: 'food'},
-                        {src: 'img/slider/olive-oil.jpg', alt: 'oil'},
-                        {src: 'img/slider/paprika.jpg', alt: 'paprika'}];
-
-    let count = 1;
+    const slidesWrapper = document.querySelector('.offer__slider-wrapper');
+    const slides = slidesWrapper.querySelectorAll('.offer__slide');
+    const slidesField = slidesWrapper.querySelector('.offer__slider-inner');
+    const prev = document.querySelector('.offer__slider-prev');
+    const next = document.querySelector('.offer__slider-next');
+    const sliderCurrent = document.querySelector('#current');
+    const sliderCountTotal = document.querySelector('#total');
+    const width = window.getComputedStyle(slidesWrapper).width;
     
-    sliderCountTotal.innerText = `0${itemsSlider.length}`;
+    let slideIndex = 1;
+    let offset = 0;
 
-    function itemSlider(item, count) {
-        slide.innerHTML = '';
-        slide.innerHTML = `
-            <div class="offer__slide">
-                <img src=${item.src} alt=${item.alt}>
-            </div>
-        `;
-        sliderCurrent.innerText = `0${count}`;
+    if (slides.length < 10) {
+        sliderCountTotal.textContent = `0${slides.length}`;
+        sliderCurrent.textContent = `0${slideIndex}`;
+    } else {
+        sliderCountTotal.textContent = slides.length;
+        sliderCurrent.textContent = slideIndex;
     }
+    
+    slidesField.style.width = 100 * slides.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
 
-    function renderItemSlider() {
-        itemsSlider.forEach((item, i) => {
-            if (i === count - 1) {
-                itemSlider(item, count);
-            }
-        });
-    }
+    slidesWrapper.style.overflow = 'hidden';
 
-    renderItemSlider();
+    slides.forEach(slide => {
+        slide.style.width = width;
+    })
 
-    sliderCounter.addEventListener('click', e => {
-        if (e.target === sliderNext) {
-            count++;
-            if (count > itemsSlider.length) {
-                count = 1; 
-            }
-            renderItemSlider();
-        } else if (e.target === sliderPrev) {
-            count--;
-            if (count < 1) {
-                count = itemsSlider.length;
-            }
-            renderItemSlider();
+    next.addEventListener('click', () => {
+        if (offset === +width.slice(0, width.length - 2) * (slides.length - 1)) {
+            offset = 0;
+        } else {
+            offset += +width.slice(0, width.length - 2);
+        }
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == slides.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+
+        if (slides.length < 10) {
+            sliderCountTotal.textContent = `0${slides.length}`;
+            sliderCurrent.textContent = `0${slideIndex}`;
+        } else {
+            sliderCountTotal.textContent = slides.length;
+            sliderCurrent.textContent = slideIndex;
+        }
+    });
+
+    prev.addEventListener('click', () => {
+        if (offset === 0) {
+            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+        } else {
+            offset -= +width.slice(0, width.length - 2);
+        }
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+
+        if (slides.length < 10) {
+            sliderCountTotal.textContent = `0${slides.length}`;
+            sliderCurrent.textContent = `0${slideIndex}`;
+        } else {
+            sliderCountTotal.textContent = slides.length;
+            sliderCurrent.textContent = slideIndex;
         }
     });
 });
